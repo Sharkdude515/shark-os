@@ -69,17 +69,19 @@ else
   rm -f "$TARGET_DIR/.config/autostart/plank.desktop"
 fi
 
-# 5. Download & Set Custom Wallpaper (if URL provided)
-if [ -n "$WALLPAPER_URL" ]; then
-  wget -q -O "$TARGET_DIR/Pictures/custom-wallpaper.jpg" "$WALLPAPER_URL"
-  cat << EOF > "$XML_DIR/xfce4-desktop.xml"
+# 5. Copy Local Wallpaper & Set Desktop Background
+if [ -n "$WALLPAPER_PATH" ] && [ -f "$WALLPAPER_PATH" ]; then
+  sudo mkdir -p /usr/share/backgrounds
+  sudo cp "$WALLPAPER_PATH" /usr/share/backgrounds/shark-wallpaper.jpg
+  cat << 'EOF' > "$XML_DIR/xfce4-desktop.xml"
 <?xml version="1.0" encoding="UTF-8"?>
 <channel name="xfce4-desktop" version="1.0">
   <property name="backdrop" type="empty">
     <property name="screen0" type="empty">
       <property name="monitor0" type="empty">
         <property name="workspace0" type="empty">
-          <property name="last-image" type="string" value="/etc/skel/Pictures/custom-wallpaper.jpg"/>
+          <property name="last-image" type="string" value="/usr/share/backgrounds/shark-wallpaper.jpg"/>
+          <property name="image-style" type="int" value="5"/>
         </property>
       </property>
     </property>
@@ -87,5 +89,3 @@ if [ -n "$WALLPAPER_URL" ]; then
 </channel>
 EOF
 fi
-
-echo "Layout applied to $TARGET_DIR!"
